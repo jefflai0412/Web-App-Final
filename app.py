@@ -11,6 +11,72 @@ app.secret_key = 'your_secret_key'
 
 db = SQLAlchemy(app)
 
+
+single = {
+        "type": "single",
+        "name": "Single Room",
+        "price": "$100",
+        "max_occupancy": "1 guests",
+        "image_url": ["imgs/single_1.webp", "imgs/single_2.webp", "imgs/single_3.webp", "imgs/lobby_1.webp", "imgs/gym_1.webp", "imgs/parking_1.webp", "imgs/pool.webp"],
+        "features": {
+            "Bathroom": True,
+            "Bathtub": False,
+            "Hardwood Floors": True,
+            "TV": True,
+            "Wi-Fi": False,
+            "Mini-fridge": True,
+            "Balcony": False
+        }
+    }
+double = {
+        "type": "double",
+        "name": "Double Room",
+        "price": "$200",
+        "max_occupancy": "2 guests",
+        "image_url": ["imgs/double_1.webp", "imgs/double_2.webp", "imgs/double_3.webp", "imgs/lobby_1.webp", "imgs/gym_1.webp", "imgs/parking_1.webp", "imgs/pool.webp"],
+        "features": {
+            "Bathroom": True,
+            "Bathtub": True,
+            "Hardwood Floors": True,
+            "TV": True,
+            "Wi-Fi": False,
+            "Mini-fridge": True,
+            "Balcony": False
+        }
+    }
+family = {
+        "type": "family",
+        "name": "Family Room",
+        "price": "$100",
+        "max_occupancy": "4 guests",
+        "image_url": ["imgs/family_1.webp", "imgs/family_2.webp", "imgs/family_3.webp", "imgs/lobby_1.webp", "imgs/gym_1.webp", "imgs/parking_1.webp", "imgs/pool.webp"],
+        "features": {
+            "Bathroom": True,
+            "Bathtub": True,
+            "Hardwood Floors": True,
+            "TV": True,
+            "Wi-Fi": False,
+            "Mini-fridge": True,
+            "Balcony": False
+        }
+    }
+deluxe = {
+    "type": "deluxe",
+    "name": "Deluxe Suite",
+    "price": "$200",
+    "max_occupancy": "4 guests",
+    "image_url": ["imgs/deluxe_1.webp", "imgs/deluxe_2.webp", "imgs/deluxe_3.webp", "imgs/deluxe_4.webp", "imgs/lobby_1.webp", "imgs/gym_1.webp", "imgs/parking_1.webp", "imgs/pool.webp"],
+    "features": {
+        "Bathroom": True,
+        "Bathtub": True,
+        "Hardwood Floors": True,
+        "TV": True,
+        "Wi-Fi": True,
+        "Mini-fridge": False,
+        "Balcony": True
+    }
+}
+
 # Database Model
 class Booking(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -29,7 +95,23 @@ def init_db():
 @app.route('/')
 def index():
     # bookings = Booking.query.all()
-    return render_template('index.html', bookings=None)
+    return render_template('index.html')
+
+@app.route('/rooms/<string:room_type>')
+def room(room_type):
+    print("room type:", room_type)
+    # Fetch the appropriate room data based on room_type
+    rooms_data = {
+        "single": single,
+        "double": double,
+        "family": family,
+        "deluxe": deluxe,
+    }
+    room = rooms_data.get(room_type.lower())  # Use `.get()` to fetch the room or return None
+    if not room:
+        return "Room not found", 404  # Return a 404 error if the room type is invalid
+    return render_template('room.html', room=room)
+
 
 @app.route('/search_booking', methods=['POST'])
 def search_booking():
@@ -48,8 +130,9 @@ def search_booking():
 
 
 # Add a new booking
-@app.route('/book', methods=['GET', 'POST'])
-def book():
+@app.route('/book_room', methods=['GET', 'POST'])
+def book_room():
+    room_type = request.args.get('room_type', None)  # Default to None if not provided
     min_date = date.today().strftime('%Y-%m-%d')  # Set the minimum date to today
     if request.method == 'POST':
         try:
@@ -71,7 +154,7 @@ def book():
         except Exception as e:
             db.session.rollback()
             flash(f"Error: {str(e)}", 'error')
-    return render_template('booking.html', min_date=min_date)
+    return render_template('booking.html', room_type=room_type, min_date=min_date)
 
 # Delete a booking
 @app.route('/delete/<int:id>', methods=['POST'])

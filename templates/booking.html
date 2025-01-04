@@ -7,8 +7,10 @@
     <title>Book a Room</title>
 </head>
 <body>
+    {% include 'navbar.html' %}
+
     <div class="container mt-4">
-        <h1 class="mb-4">Book a Room</h1>
+        <h1 class="mb-4">Book {{ room_type }}</h1>
         <!-- Display Flash Messages -->
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
@@ -32,13 +34,14 @@
             <div class="mb-3">
                 <label for="room_type" class="form-label">Room Type:</label>
                 <select name="room_type" class="form-select" required>
-                    <option value="" disabled selected>Select a Room Type</option>
-                    <option value="Single Room">Single Room</option>
-                    <option value="Double Room">Double Room</option>
-                    <option value="Deluxe Suite">Deluxe Suite</option>
-                    <option value="Family Room">Family Room</option>
+                    <option value="" disabled {% if not room_type %}selected{% endif %}>Select a Room Type</option>
+                    <option value="Single Room" {% if room_type == "single" %}selected{% endif %}>Single Room</option>
+                    <option value="Double Room" {% if room_type == "double" %}selected{% endif %}>Double Room</option>
+                    <option value="Deluxe Suite" {% if room_type == "deluxe" %}selected{% endif %}>Deluxe Suite</option>
+                    <option value="Family Room" {% if room_type == "family" %}selected{% endif %}>Family Room</option>
                 </select>
             </div>
+            
             <div class="mb-3">
                 <label for="user_name" class="form-label">Your Name:</label>
                 <input type="text" name="user_name" class="form-control" required>
