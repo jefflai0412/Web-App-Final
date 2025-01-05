@@ -94,8 +94,9 @@ def init_db():
 
 @app.route('/')
 def index():
-    # bookings = Booking.query.all()
-    return render_template('index.html')
+    rooms_data = [single, double, family, deluxe]
+    return render_template('index.html', rooms=rooms_data)
+
 
 @app.route('/rooms/<string:room_type>')
 def room(room_type):
