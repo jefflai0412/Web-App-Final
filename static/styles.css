@@ -1,0 +1,296 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+  }
+
+  .bg-image {
+    background: url('https://via.placeholder.com/1920x1080?text=Hotel+Header') no-repeat center center/cover;
+    min-height: 300px;
+  }
+  
+  .carousel-item {
+    transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+  }
+  
+  .rooms .img-fluid {
+    max-height: 400px;
+    object-fit: cover;
+    border-radius: 10px;
+  }
+
+  .map-section {
+    background-color: #c0cfca;
+  }
+  
+  .map-section h2 {
+    font-size: 1.8rem;
+    letter-spacing: 2px;
+  }
+  
+  .map-section a.btn {
+    text-transform: uppercase;
+    border-radius: 0;
+    padding: 10px 20px;
+    font-weight: bold;
+  }
+  
+
+/* 圖片排版 */
+.photo-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 10px;
+    position: relative;
+  }
+  
+  .photo-item {
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+  }
+  
+  .photo-item img {
+    display: block;
+    width: 100%; /* 確保寬度充滿容器 */
+    aspect-ratio: 1 / 1; /* 保持圖片為正方形 */
+    object-fit: cover; /* 確保圖片不變形並充滿框架 */
+    transition: transform 0.3s ease, filter 0.3s ease;
+    height: 300px;
+  }
+  
+  .photo-item::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0);
+    transition: background 0.3s ease;
+  }
+  
+  .photo-item:hover img {
+    transform: scale(1.1); /* 放大圖片 */
+    filter: brightness(70%); /* 降低亮度 */
+  }
+  
+  .photo-item:hover::before {
+    background: rgba(128, 0, 128, 0.4); /* 紫色漸變效果 */
+  }
+  
+  /* 圓形圖片樣式 */
+  .photo-item.circle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    width: 350px;
+    height: 350px;
+    border-radius: 400%;
+    overflow: hidden;
+    border: #ffffff solid 10px;
+  }
+  
+  .photo-item.circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+/* 全螢幕 Header 基礎樣式 */
+.fullscreen {
+    height: 100vh; /* 滿屏高度 */
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  
+  /* 背景圖片樣式 */
+  .bg-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 確保圖片比例不變形 */
+    z-index: 1;
+  }
+  
+  /* 黑色半透明覆蓋層 */
+  .overlay {
+    position: relative;
+    z-index: 2;
+    background: rgba(0, 0, 0, 0.4); /* 黑色透明覆蓋 */
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  
+  /* Header 文字樣式 */
+  header h1 {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+  }
+  
+  header p.lead {
+    font-size: 1.5rem;
+    font-weight: 300;
+    margin-top: 10px;
+  }
+  
+  section {
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .facilities, .attractions, .rooms {
+    background: #f9f9f9;
+    margin: 20px 0;
+    padding: 20px;
+  }
+  
+  .cards {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  
+  .card {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    width: 300px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .card img {
+    width: 100%;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+  }
+  
+  .card h3 {
+    margin: 10px 0;
+  }
+  
+  .card p {
+    color: #666;
+    padding: 0 10px 10px;
+  }
+  
+  .card a {
+    display: block;
+    margin: 10px;
+    padding: 10px;
+    background: #019797;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+  }
+  
+  .card a:hover {
+    background: #0056b3;
+  }
+  
+  footer {
+    background: #333;
+    color: white;
+    padding: 20px;
+    text-align: center;
+  }
+
+/* 動畫區塊基礎樣式 */
+.scroll-animation {
+    position: relative;
+    overflow: hidden;
+    height: auto; /* 高度自適應內容 */
+  }
+  
+  .animation-container {
+    position: relative;
+    opacity: 0; /* 初始隱藏 */
+    transition: opacity 0.5s ease-in-out;
+  }
+  
+  .animation-image {
+    transform: translateX(0); /* 初始位置在中間 */
+    transition: transform 1s ease-in-out;
+  }
+  
+  .animation-image img {
+    width: 120%; /* 默認寬度 */
+    max-width: 500px; /* 可根據需要調整 */
+    height: 500px; /* 保持寬高比例 */
+    object-fit: cover; /* 確保圖片不變形 */
+  }
+  
+  .animation-text {
+    opacity: 0; /* 初始隱藏 */
+    transform: translateY(20px); /* 輕微向下 */
+    transition: opacity 1s ease-in-out 0.5s, transform 1s ease-in-out 0.5s; /* 延遲後滑動與顯示 */
+  }
+  
+  /* 滾動觸發動畫效果 */
+  .animation-container.active {
+    opacity: 1;
+  }
+  
+  .animation-container.active .animation-image {
+    transform: translateX(-10%); /* 圖片向左滑動 */
+  }
+  
+  .animation-container.active .animation-text {
+    opacity: 1;
+    transform: translateY(0); /* 文字回到原位 */
+  }
+  
+  /* 自訂圖片大小 */
+  .custom-size {
+    width: 800px; /* 自定義寬度 */
+    height: 300px; /* 自定義高度 */
+    object-fit: cover; /* 確保圖片比例不變形 */
+  }
+
+  /* 全螢幕配置 */
+.fullscreen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh; /* 滿屏高度 */
+    background: #fdf4e3; /* 溫暖信封顏色 */
+    color: #333; /* 字體顏色 */
+    font-family: "Arial", sans-serif;
+  }
+  
+  .content {
+    text-align: center;
+    padding: 20px;
+    border-radius: 15px;
+    max-width: 700px; /* 信封寬度 */
+  }
+  
+  .handwritten {
+    font-family: "Dancing Script", cursive; /* 手寫字體 */
+    font-size: 2.5rem; /* 手寫字大小 */
+    margin-bottom: 20px;
+    color: #6b4f4f; /* 溫暖的手寫字顏色 */
+  }
+  
+  .message {
+    font-size: 1.2rem;
+    font-style: italic;
+    color: #555;
+    line-height: 1.6;
+  }
+  
