@@ -26,9 +26,9 @@
                     {% endfor %}
                 </ol>
                 <div class="carousel-inner h-25">
-                    {% for img_url in room.image_url %}
+                    {% for image_url in room.image_url %}
                     <div class="carousel-item {% if loop.first %}active{% endif %}">
-                        <img class="d-block w-50 mx-auto" src="{{ url_for('static', filename=img_url) }}" alt="Image">
+                        <img class="d-block w-50 mx-auto" src="{{ url_for('static', filename=image_url) }}" alt="Image">
                     </div>
                     {% endfor %}
                 </div>
