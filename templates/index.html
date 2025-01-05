@@ -1,81 +1,239 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hotel Booking Status</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>飯店客房介紹</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="static/styles.css">
 </head>
 <body>
-    <div class="container mt-5">
-        <h1 class="mb-4">Booking.cum</h1>
-
-        <!-- Search Form -->
-        <form method="POST" action="{{ url_for('search_booking') }}" class="mb-4">
-            <div class="row">
-                <div class="col-md-4">
-                    <input type="text" name="booking_id" class="form-control" placeholder="Enter Booking ID" required>
-                </div>
-                <div class="col-md-4">
-                    <button type="submit" class="btn btn-primary w-80">Search Booking</button>
-                </div>
-            </div>
-        </form>
-
-        <!-- Display Flash Messages -->
-        {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            {% endfor %}
-        {% endif %}
-        {% endwith %}
-
-
-        <!-- Booking Table -->
-        <table class="table table-striped table-bordered">
-            <thead class="table-dark">
-                <tr>
-                    <th scope="col">User Name</th>
-                    <th scope="col">Check-In Date</th>
-                    <th scope="col">Check-Out Date</th>
-                    <th scope="col">Room Type</th>
-                    <th scope="col">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% if bookings %}
-                    {% for booking in bookings %}
-                    <tr>
-                        <td>{{ booking.user_name }}</td>
-                        <td>{{ booking.check_in }}</td>
-                        <td>{{ booking.check_out }}</td>
-                        <td>{{ booking.room_type }}</td>
-                        <td>
-                            <!-- Delete Button -->
-                            <form method="POST" action="{{ url_for('delete_booking', id=booking.id) }}">
-                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                            </form>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                {% endif %}
-            </tbody>
-        </table>
-
-        <!-- Add Booking Button -->
-        <div class="mt-4 d-flex justify-content-start gap-3">
-            <a href="{{ url_for('book') }}" class="btn btn-primary">Book a Room</a>
-            <a href="{{ url_for('admin') }}" class="btn btn-info">Admin</a>
-        </div>
+  {% include 'navbar.html' %}
+  <!-- 全螢幕 Header -->
+  <header class="bg-image fullscreen text-white text-center">
+    <img src="https://www.shutterstock.com/image-photo/stunning-landscape-swimming-pool-blue-600nw-2287500025.jpg" class="bg-image" alt="Tropical Hotel">
+    <div class="overlay">
+      <div class="container">
         
+        <h1>飯店客房介紹</h1>
+        <p class="lead">探索舒適與現代設計的完美結合</p>
+      </div>
     </div>
+  </header>
 
-    <!-- Bootstrap JS Bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- 全螢幕信封樣式 -->
+<section class="envelope fullscreen">
+  <div class="content text-center">
+    <h1 class="handwritten">To our dearest guest,</h1>
+    <p class="message">"May your journey be filled with moments of joy, relaxation, and unforgettable memories."</p>
+  </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Map Section -->
+    <section class="map-section py-5">
+      <div class="container">
+        <div class="row align-items-center">
+          <!-- Text Section -->
+          <div class="col-md-5 text-white p-4" style="background-color: #34666F;">
+            <h2 class="mb-3">GETTING HERE</h2>
+            <p>
+              Hyatt Regency Guam<br>
+              1155 Pale San Vitores Road, Tumon, GU 96913-4206, United States of America
+            </p>
+            <p class="mb-4">+1 671 647 1234</p>
+            <a href="#" class="btn btn-outline-light">PARKING & TRANSPORTATION</a>
+          </div>
+          <!-- Map Image -->
+          <div class="col-md-7">
+            <img src="https://via.placeholder.com/800x400?text=Map+Image" class="img-fluid rounded" alt="Map">
+          </div>
+        </div>
+      </div>
+    </section>
+
+  <!-- 新增動畫區塊 -->
+  <section class="scroll-animation py-5 bg-light">
+    <div class="container">
+      <div class="row align-items-center animation-container">
+        <!-- 圖片 -->
+        <div class="col-md-6 animation-image">
+          <img src="https://via.placeholder.com/600x400?text=Custom+Size+Image" class="img-fluid custom-size" alt="Scroll Image">
+        </div>
+        <!-- 文字 -->
+        <div class="col-md-6 animation-text text-end">
+          <h2>探索更多精彩內容</h2>
+          <p>滑動到這裡，體驗圖片和文字的動態效果。我們為您準備了更多的驚喜內容。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+    const animationContainers = document.querySelectorAll('.animation-container');
+  
+    const handleScroll = () => {
+      animationContainers.forEach((container) => {
+        const rect = container.getBoundingClientRect();
+        const windowHeight = window.innerHeight;
+  
+        // 當元素進入視窗範圍時觸發
+        if (rect.top <= windowHeight * 0.6 && rect.bottom >= windowHeight * 0.4) {
+          container.classList.add('active');
+        }
+      });
+    };
+  
+    // 初始化滾動監聽
+    window.addEventListener('scroll', handleScroll);
+  });
+  </script>
+
+  <!-- 周邊活動欄位 -->
+  <section class="activities py-5 bg-light">
+    <div class="container">
+
+      <div class="photo-grid">
+        <!-- 左上 -->
+        <a href="https://example.com/activity1" class="photo-item">
+          <img src="https://via.placeholder.com/400x400?text=Activity+1" alt="Activity 1">
+        </a>
+        <!-- 右上 -->
+        <a href="https://example.com/activity2" class="photo-item">
+          <img src="https://via.placeholder.com/400x400?text=Activity+2" alt="Activity 2">
+        </a>
+        <!-- 圓形中間 -->
+        <a href="https://example.com/activity3" class="photo-item circle">
+          <img src="https://via.placeholder.com/300x300?text=Activity+3" alt="Activity 3">
+        </a>
+        <!-- 左下 -->
+        <a href="https://example.com/activity4" class="photo-item">
+          <img src="https://via.placeholder.com/400x400?text=Activity+4" alt="Activity 4">
+        </a>
+        <!-- 右下 -->
+        <a href="https://example.com/activity5" class="photo-item">
+          <img src="https://via.placeholder.com/400x400?text=Activity+5" alt="Activity 5">
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Rooms Section -->
+  <section class="rooms py-5 bg-light">
+    <div class="container">
+      <h2 class="mb-4 text-center">房型介紹</h2>
+      <div id="roomCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+          <!-- Room 1 -->
+          <div class="carousel-item active">
+            <div class="row align-items-center">
+              <div class="col-md-7">
+                <img src="https://via.placeholder.com/800x400?text=Room+1" class="img-fluid rounded" alt="Room 1">
+              </div>
+              <div class="col-md-4">
+                <h3>RELAX & FUN</h3>
+                <p>品味陽光、站前住宿、舒適客房。這是一間精心設計的客房，提供溫馨而現代的住宿體驗。</p>
+                <ul>
+                  <li>最多入住人數：2人</li>
+                  <li>床型：1張加大雙人床</li>
+                  <li>房間面積：50平方公尺</li>
+                </ul>
+                <a href="#" class="btn btn-primary">詳細介紹</a>
+              </div>
+              <div class="col-md-1 d-none d-md-block">
+                <img src="https://via.placeholder.com/150x150?text=Room+2" class="img-fluid rounded shadow-sm" alt="Next Room Preview">
+              </div>
+            </div>
+          </div>
+          <!-- Room 2 -->
+          <div class="carousel-item">
+            <div class="row align-items-center">
+              <div class="col-md-7">
+                <img src="https://via.placeholder.com/800x400?text=Room+2" class="img-fluid rounded" alt="Room 2">
+              </div>
+              <div class="col-md-4">
+                <h3>STATION SUITE</h3>
+                <p>尊享奢華與便捷，這是我們的旗艦套房，專為旅客提供最舒適的環境。</p>
+                <ul>
+                  <li>最多入住人數：3人</li>
+                  <li>床型：1張特大雙人床 + 1張單人床</li>
+                  <li>房間面積：70平方公尺</li>
+                </ul>
+                <a href="#" class="btn btn-primary">詳細介紹</a>
+              </div>
+              <div class="col-md-1 d-none d-md-block">
+                <img src="https://via.placeholder.com/150x150?text=Room+3" class="img-fluid rounded shadow-sm" alt="Next Room Preview">
+              </div>
+            </div>
+          </div>
+          <!-- Room 3 -->
+          <div class="carousel-item">
+            <div class="row align-items-center">
+              <div class="col-md-7">
+                <img src="https://via.placeholder.com/800x400?text=Room+3" class="img-fluid rounded" alt="Room 3">
+              </div>
+              <div class="col-md-4">
+                <h3>DELUXE ROOM</h3>
+                <p>寬敞舒適的豪華客房，提供完美的住宿體驗，適合商務和旅遊客人。</p>
+                <ul>
+                  <li>最多入住人數：2人</li>
+                  <li>床型：1張雙人床</li>
+                  <li>房間面積：40平方公尺</li>
+                </ul>
+                <a href="#" class="btn btn-primary">詳細介紹</a>
+              </div>
+              <div class="col-md-1 d-none d-md-block">
+                <img src="https://via.placeholder.com/150x150?text=Room+4" class="img-fluid rounded shadow-sm" alt="Next Room Preview">
+              </div>
+            </div>
+          </div>
+          <!-- Room 4 -->
+          <div class="carousel-item">
+            <div class="row align-items-center">
+              <div class="col-md-7">
+                <img src="https://via.placeholder.com/800x400?text=Room+4" class="img-fluid rounded" alt="Room 4">
+              </div>
+              <div class="col-md-4">
+                <h3>BUDGET ROOM</h3>
+                <p>經濟實惠的選擇，提供基本設施與舒適的住宿體驗，滿足您的需求。</p>
+                <ul>
+                  <li>最多入住人數：2人</li>
+                  <li>床型：2張單人床</li>
+                  <li>房間面積：30平方公尺</li>
+                </ul>
+                <a href="#" class="btn btn-primary">詳細介紹</a>
+              </div>
+              <div class="col-md-1 d-none d-md-block">
+                <img src="https://via.placeholder.com/150x150?text=Room+1" class="img-fluid rounded shadow-sm" alt="Next Room Preview">
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Carousel Controls -->
+        <button class="carousel-control-prev" type="button" data-bs-target="#roomCarousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#roomCarousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-4 bg-dark text-white text-center">
+    <p>&copy; 2025 Booking Hotels. All rights reserved.</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
