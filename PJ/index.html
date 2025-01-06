@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>旅遊指南</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- 全螢幕 Header -->
+  <header class="fullscreen text-white text-center">
+    <div class="overlay">
+      <div class="container">
+        <h1>旅遊指南</h1>
+        <p class="lead">探索飯店周邊的精彩景點</p>
+      </div>
+    </div>
+  </header>
+  <!-- 景點區域 1 -->
+  <section class="attraction-section bg-light py-5">
+    <div class="container">
+      <h2 class="text-center mb-4">熱帶海灘</h2>
+      <div class="row align-items-center g-4">
+        <div class="col-md-6">
+          <div class="image-wrapper">
+            <img src="https://via.placeholder.com/600x400?text=Beach" class="img-fluid scale-on-scroll" alt="熱帶海灘">
+          </div>
+        </div>
+        <div class="col-md-6">
+          <p>
+            陽光、沙灘與海浪，這裡是您度假的首選地點，無論是放鬆還是享受水上活動，熱帶海灘能滿足您的所有需求。
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+
+  <!-- 景點區域 2 -->
+  <section class="attraction-section bg-white py-5">
+    <div class="container">
+      <h2 class="text-center mb-4">熱帶雨林</h2>
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="image-wrapper">
+            <img src="https://via.placeholder.com/400x300?text=Rainforest+1" class="img-fluid scale-on-scroll" alt="Rainforest 1">
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="image-wrapper">
+            <img src="https://via.placeholder.com/400x300?text=Rainforest+2" class="img-fluid scale-on-scroll" alt="Rainforest 2">
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="image-wrapper">
+            <img src="https://via.placeholder.com/400x300?text=Rainforest+3" class="img-fluid scale-on-scroll" alt="Rainforest 3">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 景點區域 3 -->
+  <section class="attraction-section bg-light py-5">
+    <div class="container">
+      <h2 class="text-center mb-4">當地市集</h2>
+      <div class="row align-items-center g-4">
+        <div class="col-md-6 order-md-2">
+          <div class="image-wrapper">
+            <img src="https://via.placeholder.com/600x400?text=Market" class="img-fluid scale-on-scroll" alt="當地市集">
+          </div>
+        </div>
+        <div class="col-md-6 order-md-1">
+          <p>
+            體驗當地文化的精髓，在市集中找到最地道的美食與紀念品，讓您的旅途更加豐富多彩。
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const images = document.querySelectorAll('.scale-on-scroll');
+
+      const handleScroll = () => {
+        images.forEach((img) => {
+          const rect = img.getBoundingClientRect();
+          if (rect.top < window.innerHeight && rect.bottom > 0) {
+            img.classList.add('scrolled');
+          }
+        });
+      };
+
+      window.addEventListener('scroll', handleScroll);
+    });
+
+  </script>
+
+  <!-- 飲食區 -->
+  <section class="dining py-5 bg-light">
+    <div class="container">
+      <h2 class="text-center mb-4">Food & Bar</h2>
+      <div class="row g-3">
+        <!-- 12 個方形卡片 -->
+        <!-- 卡片示例 -->
+        <div class="col-lg-3 col-md-4 col-sm-6">
+          <div class="food-card">
+            <img src="https://via.placeholder.com/300x300?text=Restaurant+1" class="food-img" alt="Restaurant 1">
+            <div class="info-overlay">
+              <h5>餐廳 1</h5>
+              <p>提供當地特色美食</p>
+            </div>
+          </div>
+        </div>
+        <!-- 複製以下結構以完成 12 格 -->
+        <div class="col-lg-3 col-md-4 col-sm-6">
+          <div class="food-card">
+            <img src="https://via.placeholder.com/300x300?text=Restaurant+2" class="food-img" alt="Restaurant 2">
+            <div class="info-overlay">
+              <h5>餐廳 2</h5>
+              <p>熱帶風味飲品與小吃</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-4 col-sm-6">
+          <div class="food-card">
+            <img src="https://via.placeholder.com/300x300?text=Restaurant+2" class="food-img" alt="Restaurant 2">
+            <div class="info-overlay">
+              <h5>餐廳 2</h5>
+              <p>熱帶風味飲品與小吃</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-4 col-sm-6">
+          <div class="food-card">
+            <img src="https://via.placeholder.com/300x300?text=Restaurant+2" class="food-img" alt="Restaurant 2">
+            <div class="info-overlay">
+              <h5>餐廳 2</h5>
+              <p>熱帶風味飲品與小吃</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-4 col-sm-6">
+          <div class="food-card">
+            <img src="https://via.placeholder.com/300x300?text=Restaurant+2" class="food-img" alt="Restaurant 2">
+            <div class="info-overlay">
+              <h5>餐廳 2</h5>
+              <p>熱帶風味飲品與小吃</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-4 col-sm-6">
+          <div class="food-card">
+            <img src="https://via.placeholder.com/300x300?text=Restaurant+2" class="food-img" alt="Restaurant 2">
+            <div class="info-overlay">
+              <h5>餐廳 2</h5>
+              <p>熱帶風味飲品與小吃</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-4 col-sm-6">
+          <div class="food-card">
+            <img src="https://via.placeholder.com/300x300?text=Restaurant+2" class="food-img" alt="Restaurant 2">
+            <div class="info-overlay">
+              <h5>餐廳 2</h5>
+              <p>熱帶風味飲品與小吃</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-4 col-sm-6">
+          <div class="food-card">
+            <img src="https://via.placeholder.com/300x300?text=Restaurant+2" class="food-img" alt="Restaurant 2">
+            <div class="info-overlay">
+              <h5>餐廳 2</h5>
+              <p>熱帶風味飲品與小吃</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-4 col-sm-6">
+          <div class="food-card">
+            <img src="https://via.placeholder.com/300x300?text=Restaurant+2" class="food-img" alt="Restaurant 2">
+            <div class="info-overlay">
+              <h5>餐廳 2</h5>
+              <p>熱帶風味飲品與小吃</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-4 col-sm-6">
+          <div class="food-card">
+            <img src="https://via.placeholder.com/300x300?text=Restaurant+2" class="food-img" alt="Restaurant 2">
+            <div class="info-overlay">
+              <h5>餐廳 2</h5>
+              <p>熱帶風味飲品與小吃</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-4 col-sm-6">
+          <div class="food-card">
+            <img src="https://via.placeholder.com/300x300?text=Restaurant+2" class="food-img" alt="Restaurant 2">
+            <div class="info-overlay">
+              <h5>餐廳 2</h5>
+              <p>熱帶風味飲品與小吃</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-4 col-sm-6">
+          <div class="food-card">
+            <img src="https://via.placeholder.com/300x300?text=Restaurant+2" class="food-img" alt="Restaurant 2">
+            <div class="info-overlay">
+              <h5>餐廳 2</h5>
+              <p>熱帶風味飲品與小吃</p>
+            </div>
+          </div>
+        </div>
+        <!-- 持續添加直到共 12 個 -->
+      </div>
+    </div>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+
+
+  <!-- 注意事項 -->
+  <section class="tips py-5 bg-light">
+    <div class="container">
+      <h2 class="text-center mb-4">旅遊小提示</h2>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">請攜帶足夠的防曬用品。</li>
+        <li class="list-group-item">參觀景點前，提前確認開放時間。</li>
+        <li class="list-group-item">尊重當地文化與規範，維護環境整潔。</li>
+      </ul>
+    </div>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
