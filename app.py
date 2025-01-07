@@ -89,6 +89,10 @@ def index():
     rooms_data = Room.query.all()
     return render_template('index.html', rooms=rooms_data)
 
+@app.route('/intro')
+def intro():
+    return render_template('intro.html')
+
 @app.route('/rooms/<string:room_type>')
 def room(room_type):
     room = Room.query.filter_by(type=room_type.lower()).first()
