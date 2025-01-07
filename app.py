@@ -2,10 +2,16 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-from flask import Flask, render_template, request, flash, redirect, url_for
+from flask import Flask, render_template, request, flash, redirect, url_for , jsonify
 from datetime import datetime, date
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+
+from openai import OpenAI 
+# 設置 OpenAI API Key
+client = OpenAI(
+    api_key="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"
+)
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:0000@localhost:5432/postgres'
@@ -14,8 +20,8 @@ app.secret_key = 'your_secret_key'
 
 # Mail Configuration
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 587  # Use STARTTLS
-app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_PORT'] = 25  # Use STARTTLS
+app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = False
 app.config['MAIL_USERNAME'] = 'ntuthotel@gmail.com'  # Replace with your Gmail
 app.config['MAIL_PASSWORD'] = 'jeffharvey'  
@@ -208,7 +214,7 @@ def book_room():
             db.session.add(new_booking)
             db.session.commit()
             # send_confirmation_email(user_name, user_email, check_in, check_out, room_type)
-            flash('Booking successful! A confirmation email has been sent.', 'success')
+            flash('Booking successful!', 'success')
             # return redirect(url_for('index'))
         except Exception as e:
             db.session.rollback()
@@ -240,17 +246,57 @@ def send_confirmation_email(name, email, check_in, check_out, room_type):
         part2 = MIMEText(html, 'html')
 
         msg.attach(part1)
-        msg.attach(part2)
+        # msg.attach(part2)
 
-        with smtplib.SMTP(smtp_server, smtp_port) as server:
-            server.starttls()  # Establish secure connection
+
+        server = smtplib.SMTP(smtp_server, smtp_port)
+        try:
+            server.starttls()  # Establish a secure connection
             server.login(sender_email, sender_password)
             server.sendmail(sender_email, email, msg.as_string())
+        finally:
+            server.quit()  # Ensure the connection is closed
 
         print("Email sent successfully.")
     except Exception as e:
         print(f"Failed to send email: {e}")
 
+@app.route('/chat',  methods=["GET", "POST"])
+def chat():
+    data = request.get_json()
+    
+    print("CALLED")
+    def generate():
+        '''
+        stream = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are a helpful hotel assistant."},
+                {"role": "user", "content": data["message"]}
+            ]
+        )
+'''
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": data["message"]},
+            ],
+        )
+        print(response.choices[0].message.content)
+        return response.choices[0].message.content
+        #reply = response.choices[0].message.content
+        #return jsonify({"reply": reply}), 200
+                
+    #return generate(), {"Content-Type": "text/plain"}
+    reply = generate()
+    return jsonify({"reply": reply}), 200
 
+#我好像成功了!FK
 if __name__ == '__main__':
     app.run(debug=True)
+
+
+
+
+

@@ -40,6 +40,105 @@
     .rooms .btn-primary:hover {
       background-color: #0056b3;
     }
+
+
+
+
+        /* 聊天框樣式 */
+        #chat-container {
+            width: 80%;
+            max-width: 400px;
+            height: 400px;
+            background: rgba(255, 255, 255, 0.9); /* 半透明背景 */
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+            position: fixed;
+            bottom: 100px; /* 與按鈕保持距離 */
+            left: 20px;
+            display: flex;
+            flex-direction: column;
+            transform: translateY(100%);
+            opacity: 0;
+            transition: transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1), opacity 0.3s ease-in-out;
+            z-index: 10; /* 確保聊天框在按鈕上方 */
+        }
+
+        #chat-container.open {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        #messages {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .message {
+            margin: 5px 0;
+        }
+
+        .user {
+            text-align: right;
+            color: blue;
+        }
+
+        .bot {
+            text-align: left;
+            color: green;
+        }
+
+        #message-form {
+            display: flex;
+        }
+
+        #message-form input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+
+        #message-form button {
+            padding: 10px 20px;
+            margin-left: 10px;
+            background: blue;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        /* 控制按鈕樣式 */
+        #toggle-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #4caf50, #81c784);
+            border-radius: 50%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out, background 0.3s ease;
+            z-index: 20; /* 確保按鈕在聊天框之下 */
+        }
+
+        #toggle-btn:hover {
+            transform: scale(1.1);
+            background: linear-gradient(45deg, #388e3c, #66bb6a);
+        }
+
+
   </style>
   
 </head>
@@ -49,7 +148,7 @@
 
   <!-- Fullscreen Header -->
   <header class="bg-image fullscreen text-white text-center">
-    <img src="{{ url_for('static', filename='imgs/ntut.png') }}" class="bg-image" alt="NTUT Hotel">
+    <img src="{{ url_for('static', filename='imgs/header.jpg') }}" class="bg-image" alt="NTUT Hotel">
     <div class="overlay">
       <div class="container">
         <h1>北科大飯店</h1>
@@ -202,70 +301,79 @@
     </div>
   </section>
 
-<!-- 在 index.html 中新增以下代碼 -->
-<!-- 聊天容器 -->
-<div id="chat-container" class="chat-container">
-  <div id="messages" class="messages"></div>
-  <form id="message-form" class="message-form">
-    <input type="text" id="user-input" class="user-input" placeholder="Type your message..." required>
-    <button type="submit" class="btn btn-primary">Send</button>
-  </form>
+  
+  <div id="chat-container">
+    <div id="messages"></div>
+    <form id="message-form">
+        <textarea id="user-input" placeholder="Type your message..." required></textarea>
+        <button type="submit">Send</button>
+    </form>
 </div>
 
-<!-- 控制按鈕 -->
-<div id="toggle-btn" class="toggle-btn">💬</div>
+<div id="toggle-btn">💬</div>
 
-<script>
-      // 控制聊天框顯示/隱藏
-const chatContainer = document.getElementById("chat-container");
-const toggleBtn = document.getElementById("toggle-btn");
+    <script>
+        const chatContainer = document.getElementById("chat-container");
+        const toggleBtn = document.getElementById("toggle-btn");
 
-toggleBtn.addEventListener("click", () => {
-  chatContainer.classList.toggle("open");
-});
+        // 控制聊天框顯示/隱藏
+        toggleBtn.addEventListener("click", () => {
+            chatContainer.classList.toggle("open");
+        });
 
-// 聊天訊息提交
-const form = document.getElementById("message-form");
-const messagesDiv = document.getElementById("messages");
+        const messagesDiv = document.getElementById("messages");
+        const form = document.getElementById("message-form");
+        const input = document.getElementById("user-input");
 
-form.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  const userInput = document.getElementById("user-input").value;
-  addMessage(userInput, "user");
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const userInput = input.value;
+            addMessage(userInput, "user");
+            
+            const response = await fetch("/chat", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({message: userInput})
+            });
+            //console.log("response: {response}"); 
+            if (response.ok) {
+                const data = await response.json(); // 將伺服器返回的 JSON 資料解析為物件
+                console.log(data); // 確保你能看到完整的回應內容
+                const reply = data.reply; // 根據後端格式提取回應內容
+                console.log("GPT 回覆:", reply);
+                addMessage(reply, "bot");
+            } else {
+                console.error("伺服器錯誤", response.status);
+            }
+            
+            /*
+            const reader = response.body.getReader();
+            let output = "";
+            
+                while (true) {
+                    const {done, value} = await reader.read();
+                    if (done) break;
+                    output += new TextDecoder().decode(value);
+                    addMessage("marked.parse(output)", "bot");
+                }
+                
+                input.value = "";
+            */
+            });
+           
+            //const data = await response.json();
 
-  try {
-    const response = await fetch("/chat", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ message: userInput }),
-    });
 
-    const data = await response.json();
-    if (response.ok) {
-      addMessage(data.reply, "bot");
-    } else {
-      addMessage("Error: " + (data.error || "Something went wrong"), "bot");
-    }
-  } catch (error) {
-    addMessage("Error: " + error.message, "bot");
-  }
-
-  document.getElementById("user-input").value = "";
-});
-
-function addMessage(text, sender) {
-  const message = document.createElement("div");
-  message.className = "message " + sender;
-  message.textContent = text;
-  messagesDiv.appendChild(message);
-  messagesDiv.scrollTop = messagesDiv.scrollHeight;
-}
-
-</script>
-  
-  
+            function addMessage(text, sender) {
+                const message = document.createElement("div");
+                message.className = "message " + sender;
+                message.innerHTML = text;
+                messagesDiv.appendChild(message);
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            }
+            </script>
+          
+          
 
   <!-- Footer -->
   <footer class="py-4 bg-dark text-white text-center">
@@ -288,5 +396,45 @@ function addMessage(text, sender) {
       window.addEventListener('scroll', handleScroll);
     });
   </script>
+
+
+<link
+rel="stylesheet"
+href="https://cdn.jsdelivr.net/gh/Dreamer-Paul/Pio@2.4/static/pio.min.css"
+/>
+<script
+async="async"
+src="https://cdn.jsdelivr.net/combine/gh/Dreamer-Paul/Pio@2.4/static/l2d.min.js,gh/Dreamer-Paul/Pio@2.4/static/pio.min.js"
+onload='
+  let pio_container = document.createElement("div");
+  pio_container.classList.add("pio-container");
+  pio_container.classList.add("right");
+  pio_container.style.bottom = "-2rem";
+  pio_container.style.zIndex = "1";
+  document.body.insertAdjacentElement("beforeend", pio_container);
+  let pio_action = document.createElement("div");
+  pio_action.classList.add("pio-action");
+  pio_container.insertAdjacentElement("beforeend", pio_action);
+  let pio_canvas = document.createElement("canvas");
+  pio_canvas.id = "pio";
+  pio_canvas.style.width = "14rem";
+  pio_canvas.width = "600";
+  pio_canvas.height = "800";
+  pio_container.insertAdjacentElement("beforeend", pio_canvas);
+  let pio = new Paul_Pio({
+    "mode": "fixed",
+    "hidden": true,
+    "content": {
+      "link": ["https:\/\/AbnerHung.github.io"],
+      "skin": ["要换成我的朋友吗？", "让她放个假吧~"],
+      "hidden": true,
+    },
+    "model": [
+      
+      "https:\/\/cdn.jsdelivr.net/gh/imuncle/live2d/model/tororo/tororo.model.json",
+
+      ]
+  });'
+></script>
 </body>
 </html>
