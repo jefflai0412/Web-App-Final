@@ -1,5 +1,8 @@
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+
 from flask import Flask, render_template, request, flash, redirect, url_for
-from flask_mail import Mail, Message
 from datetime import datetime, date
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -11,14 +14,13 @@ app.secret_key = 'your_secret_key'
 
 # Mail Configuration
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 587
+app.config['MAIL_PORT'] = 587  # Use STARTTLS
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
 app.config['MAIL_USERNAME'] = 'ntuthotel@gmail.com'  # Replace with your Gmail
 app.config['MAIL_PASSWORD'] = 'jeffharvey'  
 app.config['MAIL_DEFAULT_SENDER'] = 'ntuthotel@gmail.com'
 
-mail = Mail(app)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
@@ -40,6 +42,7 @@ class Booking(db.Model):
     room_type = db.Column(db.String(50), nullable=False)
     user_name = db.Column(db.String(100), nullable=False)
     user_email = db.Column(db.String(120), nullable=False)  # Email field
+
 
 # Initialize the database and populate room data
 @app.cli.command('init-db')
@@ -214,22 +217,40 @@ def book_room():
 
 def send_confirmation_email(name, email, check_in, check_out, room_type):
     try:
-        html_content = render_template(
+        smtp_server = 'smtp.gmail.com'
+        smtp_port = 587  # Use STARTTLS
+        sender_email = "ntuthotel@gmail.com"
+        sender_password = "jeffharvey"
+
+        msg = MIMEMultipart('alternative')
+        msg['Subject'] = "Your Booking Confirmation - NTUT Hotel"
+        msg['From'] = sender_email
+        msg['To'] = email
+
+        text = f"Hi {name},\n\nYour booking is confirmed!\nRoom: {room_type}\nCheck-In: {check_in}\nCheck-Out: {check_out}\n\nThank you for choosing NTUT Hotel!"
+        html = render_template(
             'email.html',
             name=name,
             check_in=check_in.strftime('%Y-%m-%d'),
             check_out=check_out.strftime('%Y-%m-%d'),
             room_type=room_type
         )
-        msg = Message(
-            subject="Your Booking Confirmation - NTUT Hotel",
-            recipients=[email],
-            html=html_content
-        )
-        mail.send(msg)
+
+        part1 = MIMEText(text, 'plain')
+        part2 = MIMEText(html, 'html')
+
+        msg.attach(part1)
+        msg.attach(part2)
+
+        with smtplib.SMTP(smtp_server, smtp_port) as server:
+            server.starttls()  # Establish secure connection
+            server.login(sender_email, sender_password)
+            server.sendmail(sender_email, email, msg.as_string())
+
         print("Email sent successfully.")
     except Exception as e:
         print(f"Failed to send email: {e}")
+
 
 if __name__ == '__main__':
     app.run(debug=True)
