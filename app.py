@@ -93,6 +93,10 @@ def index():
 def intro():
     return render_template('intro.html')
 
+@app.route('/nearby')
+def nearby():
+    return render_template('nearby.html')
+
 @app.route('/rooms/<string:room_type>')
 def room(room_type):
     room = Room.query.filter_by(type=room_type.lower()).first()
