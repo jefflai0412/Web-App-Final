@@ -77,6 +77,16 @@ deluxe = {
     }
 }
 
+class Room(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.String(50), unique=True, nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+    price = db.Column(db.String(20), nullable=False)
+    max_occupancy = db.Column(db.String(20), nullable=False)
+    image_urls = db.Column(db.Text, nullable=False)  # Store as a comma-separated string
+    features = db.Column(db.JSON, nullable=False)  # Store features as a JSON object
+
+
 # Database Model
 class Booking(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -88,30 +98,107 @@ class Booking(db.Model):
 # Initialize the database
 @app.cli.command('init-db')
 def init_db():
-    """Initialize the database."""
+    """Initialize the database and populate it with initial data."""
     db.create_all()
-    print("Database initialized!")
+
+    # Add predefined room data
+    room_data = [
+        {
+            "type": "single",
+            "name": "Single Room",
+            "price": "$100",
+            "max_occupancy": "1 guests",
+            "image_urls": "imgs/single_1.webp,imgs/single_2.webp,imgs/single_3.webp,imgs/lobby_1.webp,imgs/gym_1.webp,imgs/parking_1.webp,imgs/pool.webp",
+            "features": {
+                "Bathroom": True,
+                "Bathtub": False,
+                "Hardwood Floors": True,
+                "TV": True,
+                "Wi-Fi": False,
+                "Mini-fridge": True,
+                "Balcony": False
+            }
+        },
+        {
+            "type": "double",
+            "name": "Double Room",
+            "price": "$200",
+            "max_occupancy": "2 guests",
+            "image_urls": "imgs/double_1.webp,imgs/double_2.webp,imgs/double_3.webp,imgs/lobby_1.webp,imgs/gym_1.webp,imgs/parking_1.webp,imgs/pool.webp",
+            "features": {
+                "Bathroom": True,
+                "Bathtub": True,
+                "Hardwood Floors": True,
+                "TV": True,
+                "Wi-Fi": False,
+                "Mini-fridge": True,
+                "Balcony": False
+            }
+        },
+        {
+            "type": "family",
+            "name": "Family Room",
+            "price": "$150",
+            "max_occupancy": "4 guests",
+            "image_urls": "imgs/family_1.webp,imgs/family_2.webp,imgs/family_3.webp,imgs/lobby_1.webp,imgs/gym_1.webp,imgs/parking_1.webp,imgs/pool.webp",
+            "features": {
+                "Bathroom": True,
+                "Bathtub": True,
+                "Hardwood Floors": True,
+                "TV": True,
+                "Wi-Fi": False,
+                "Mini-fridge": True,
+                "Balcony": False
+            }
+        },
+        {
+            "type": "deluxe",
+            "name": "Deluxe Suite",
+            "price": "$250",
+            "max_occupancy": "4 guests",
+            "image_urls": "imgs/deluxe_1.webp,imgs/deluxe_2.webp,imgs/deluxe_3.webp,imgs/deluxe_4.webp,imgs/lobby_1.webp,imgs/gym_1.webp,imgs/parking_1.webp,imgs/pool.webp",
+            "features": {
+                "Bathroom": True,
+                "Bathtub": True,
+                "Hardwood Floors": True,
+                "TV": True,
+                "Wi-Fi": True,
+                "Mini-fridge": False,
+                "Balcony": True
+            }
+        }
+    ]
+
+    for data in room_data:
+        # Check if the room type already exists to avoid duplicate entries
+        if not Room.query.filter_by(type=data['type']).first():
+            room = Room(
+                type=data['type'],
+                name=data['name'],
+                price=data['price'],
+                max_occupancy=data['max_occupancy'],
+                image_urls=data['image_urls'],
+                features=data['features']
+            )
+            db.session.add(room)
+
+    db.session.commit()
+    print("Database initialized and room data added!")
+
 
 @app.route('/')
 def index():
-    rooms_data = [single, double, family, deluxe]
+    rooms_data = Room.query.all()
     return render_template('index.html', rooms=rooms_data)
 
 
 @app.route('/rooms/<string:room_type>')
 def room(room_type):
-    print("room type:", room_type)
-    # Fetch the appropriate room data based on room_type
-    rooms_data = {
-        "single": single,
-        "double": double,
-        "family": family,
-        "deluxe": deluxe,
-    }
-    room = rooms_data.get(room_type.lower())  # Use `.get()` to fetch the room or return None
+    room = Room.query.filter_by(type=room_type.lower()).first()
     if not room:
-        return "Room not found", 404  # Return a 404 error if the room type is invalid
+        return "Room not found", 404
     return render_template('room.html', room=room)
+
 
 
 @app.route('/search_booking', methods=['POST'])

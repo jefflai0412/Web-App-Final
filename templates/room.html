@@ -11,6 +11,10 @@
             padding: 0;
             margin: 0;
         }
+        .carousel-item img {
+            max-height: 400px;
+            object-fit: cover;
+        }
     </style>
 </head>
 <body>
@@ -21,17 +25,18 @@
         <div class="card mx-auto" style="max-width: 600px;">
             <div id="carouselExampleSlidesOnly" class="carousel slide" data-bs-ride="carousel">
                 <ol class="carousel-indicators">
-                    {% for img_url in room.image_url %}
-                    <li data-bs-target="#carouselExampleIndicators" data-bs-slide-to="{{ loop.index0 }}" class="{% if loop.first %}active{% endif %}"></li>
+                    {% for image_url in room.image_urls.split(',') %}
+                    <li data-bs-target="#carouselExampleSlidesOnly" data-bs-slide-to="{{ loop.index0 }}" class="{% if loop.first %}active{% endif %}"></li>
                     {% endfor %}
                 </ol>
-                <div class="carousel-inner h-25">
-                    {% for image_url in room.image_url %}
+                <div class="carousel-inner">
+                    {% for image_url in room.image_urls.split(',') %}
                     <div class="carousel-item {% if loop.first %}active{% endif %}">
-                        <img class="d-block w-50 mx-auto" src="{{ url_for('static', filename=image_url) }}" alt="Image">
+                        <img class="d-block w-100 mx-auto" src="{{ url_for('static', filename=image_url.strip()) }}" alt="Image">
                     </div>
                     {% endfor %}
                 </div>
+                
                 <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleSlidesOnly" data-bs-slide="prev">
                     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                     <span class="visually-hidden">Previous</span>
