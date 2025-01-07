@@ -295,4 +295,78 @@ body {
     color: #555;
     line-height: 1.6;
   }
+
+  /* 聊天框樣式 */
+.chat-container {
+  width: 80%;
+  max-width: 400px;
+  height: 400px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 20px;
+  position: fixed;
+  bottom: 100px;
+  left: 20px;
+  display: flex;
+  flex-direction: column;
+  transform: translateY(100%);
+  opacity: 0;
+  transition: transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1), opacity 0.3s ease-in-out;
+  z-index: 10;
+}
+
+.chat-container.open {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.message-form {
+  display: flex;
+}
+
+.user-input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.message-form button {
+  margin-left: 10px;
+}
+
+.toggle-btn {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(45deg, #4caf50, #81c784);
+  border-radius: 50%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out, background 0.3s ease;
+  z-index: 20;
+}
+
+.toggle-btn:hover {
+  transform: scale(1.1);
+  background: linear-gradient(45deg, #388e3c, #66bb6a);
+}
+
   

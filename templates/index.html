@@ -201,6 +201,69 @@
       </div>
     </div>
   </section>
+
+<!-- 在 index.html 中新增以下代碼 -->
+<!-- 聊天容器 -->
+<div id="chat-container" class="chat-container">
+  <div id="messages" class="messages"></div>
+  <form id="message-form" class="message-form">
+    <input type="text" id="user-input" class="user-input" placeholder="Type your message..." required>
+    <button type="submit" class="btn btn-primary">Send</button>
+  </form>
+</div>
+
+<!-- 控制按鈕 -->
+<div id="toggle-btn" class="toggle-btn">💬</div>
+
+<script>
+      // 控制聊天框顯示/隱藏
+const chatContainer = document.getElementById("chat-container");
+const toggleBtn = document.getElementById("toggle-btn");
+
+toggleBtn.addEventListener("click", () => {
+  chatContainer.classList.toggle("open");
+});
+
+// 聊天訊息提交
+const form = document.getElementById("message-form");
+const messagesDiv = document.getElementById("messages");
+
+form.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const userInput = document.getElementById("user-input").value;
+  addMessage(userInput, "user");
+
+  try {
+    const response = await fetch("/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ message: userInput }),
+    });
+
+    const data = await response.json();
+    if (response.ok) {
+      addMessage(data.reply, "bot");
+    } else {
+      addMessage("Error: " + (data.error || "Something went wrong"), "bot");
+    }
+  } catch (error) {
+    addMessage("Error: " + error.message, "bot");
+  }
+
+  document.getElementById("user-input").value = "";
+});
+
+function addMessage(text, sender) {
+  const message = document.createElement("div");
+  message.className = "message " + sender;
+  message.textContent = text;
+  messagesDiv.appendChild(message);
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
+</script>
   
   
 
