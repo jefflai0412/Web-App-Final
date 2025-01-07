@@ -21,7 +21,7 @@
 /* Image Wrapper */
 .attraction-section .image-wrapper {
   width: 100%; /* 或指定固定寬度，如 300px */
-  height: 200px; /* 根據需要設置高度 */
+  height: 400px; /* 根據需要設置高度 */
   overflow: hidden;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);

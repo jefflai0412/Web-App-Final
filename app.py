@@ -1,13 +1,24 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
-from flask_sqlalchemy import SQLAlchemy
+from flask import Flask, render_template, request, flash, redirect, url_for
+from flask_mail import Mail, Message
 from datetime import datetime, date
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:0000@localhost:5432/postgres'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = 'your_secret_key'
 
+# Mail Configuration
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+app.config['MAIL_USERNAME'] = 'jefflai0412@gmail.com'  # Replace with your Gmail
+app.config['MAIL_PASSWORD'] = 'Gg122585063'         # Replace with your Gmail password or app-specific password
+app.config['MAIL_DEFAULT_SENDER'] = 'jefflai0412@gmail.com'
+
 db = SQLAlchemy(app)
+mail = Mail(app)
 
 # Room Model
 class Room(db.Model):
@@ -26,6 +37,8 @@ class Booking(db.Model):
     check_out = db.Column(db.Date, nullable=False)
     room_type = db.Column(db.String(50), nullable=False)
     user_name = db.Column(db.String(100), nullable=False)
+    user_email = db.Column(db.String(120), nullable=False)  # Email field
+
 
 # Initialize the database and populate room data
 @app.cli.command('init-db')
@@ -121,7 +134,7 @@ def admin():
                     booking.check_out = datetime.strptime(request.form.get(f"check_out_{booking_id}"), '%Y-%m-%d')
                     booking.room_type = request.form.get(f"room_type_{booking_id}")
                     db.session.commit()
-                    flash(f"Booking {booking_id} updated successfully!", "success")
+                    # flash(f"Booking {booking_id} updated successfully!", "success")
 
         # Handle Filters
         booking_id = request.form.get('booking_id')
@@ -163,12 +176,12 @@ def edit_booking(booking_id):
             booking.room_type = request.form['room_type']
             booking.user_name = request.form['user_name']
             db.session.commit()
-            flash('Booking updated successfully!', 'success')
+            # flash('Booking updated successfully!', 'success')
             return redirect(url_for('admin'))
         except Exception as e:
             db.session.rollback()
             flash(f"Error updating booking: {str(e)}", 'error')
-    return render_template('edit_booking.html', booking=booking)
+    # return render_template('edit_booking.html', booking=booking)
 
 @app.route('/delete/<int:id>', methods=['POST'])
 def delete_booking(id):
