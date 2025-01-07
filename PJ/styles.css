@@ -73,41 +73,45 @@
     color: #555;
   }
 
-  /* 飲食區卡片樣式 */
+/* 飲食區卡片樣式 */
 .food-card {
-    position: relative;
-    width: 100%;
-    overflow: hidden;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .food-img {
-    width: 100%;
-    height: auto;
-    transition: filter 0.3s ease, transform 0.3s ease;
-  }
-  
-  .food-card:hover .food-img {
-    filter: blur(4px); /* 圖片模糊效果 */
-    transform: scale(1.1); /* 放大效果 */
-  }
-  
-  .info-overlay {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    opacity: 0;
-    color: white;
-    
-    padding: 20px;
-    border-radius: 10px;
-    transition: opacity 0.3s ease;
-    width: 80%; /* 保持一致的文本區域寬度 */
-  }
-  
-  .food-card:hover .info-overlay {
-    opacity: 1; /* 顯示信息層 */
-  }
+  position: relative;
+  width: 200px; /* 父元素的寬度 */
+  height: 200px; /* 固定卡片的高度 */
+  overflow: hidden;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.food-img {
+  width: 100%; /* 確保圖片填滿寬度 */
+  height: 100%; /* 確保圖片填滿高度 */
+  object-fit: cover; /* 填滿框架並保持比例 */
+  transition: filter 0.3s ease, transform 0.3s ease;
+}
+
+.food-card:hover .food-img {
+  filter: blur(4px); /* 圖片模糊效果 */
+  transform: scale(1.1); /* 放大效果 */
+}
+
+.info-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  opacity: 0;
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  transition: opacity 0.3s ease;
+  width: 80%; /* 保持一致的文本區域寬度 */
+}
+
+.food-card:hover .info-overlay {
+  opacity: 1; /* 顯示信息層 */
+}
