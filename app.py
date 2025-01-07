@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, flash, redirect, url_for
 from flask_mail import Mail, Message
 from datetime import datetime, date
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:0000@localhost:5432/postgres'
@@ -13,12 +14,13 @@ app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
-app.config['MAIL_USERNAME'] = 'jefflai0412@gmail.com'  # Replace with your Gmail
-app.config['MAIL_PASSWORD'] = 'Gg122585063'         # Replace with your Gmail password or app-specific password
-app.config['MAIL_DEFAULT_SENDER'] = 'jefflai0412@gmail.com'
+app.config['MAIL_USERNAME'] = 'ntuthotel@gmail.com'  # Replace with your Gmail
+app.config['MAIL_PASSWORD'] = 'jeffharvey'  
+app.config['MAIL_DEFAULT_SENDER'] = 'ntuthotel@gmail.com'
 
-db = SQLAlchemy(app)
 mail = Mail(app)
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 # Room Model
 class Room(db.Model):
@@ -39,14 +41,10 @@ class Booking(db.Model):
     user_name = db.Column(db.String(100), nullable=False)
     user_email = db.Column(db.String(120), nullable=False)  # Email field
 
-
 # Initialize the database and populate room data
 @app.cli.command('init-db')
 def init_db():
-    """Initialize the database and populate it with initial data."""
     db.create_all()
-
-    # Add predefined room data
     room_data = [
         {
             "type": "single",
@@ -81,7 +79,6 @@ def init_db():
             }
         },
     ]
-
     for data in room_data:
         if not Room.query.filter_by(type=data['type']).first():
             room = Room(
@@ -117,12 +114,9 @@ def room(room_type):
         return "Room not found", 404
     return render_template('room.html', room=room)
 
-
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
     query = Booking.query
-
-    # Handle Editing Bookings
     if request.method == 'POST':
         for key in request.form.keys():
             if key.startswith("edit_booking_"):
@@ -133,23 +127,19 @@ def admin():
                     booking.check_in = datetime.strptime(request.form.get(f"check_in_{booking_id}"), '%Y-%m-%d')
                     booking.check_out = datetime.strptime(request.form.get(f"check_out_{booking_id}"), '%Y-%m-%d')
                     booking.room_type = request.form.get(f"room_type_{booking_id}")
+                    booking.user_email = request.form.get(f"user_email_{booking_id}")
                     db.session.commit()
-                    # flash(f"Booking {booking_id} updated successfully!", "success")
-
-        # Handle Filters
         booking_id = request.form.get('booking_id')
         user_name = request.form.get('user_name')
         date_from = request.form.get('date_from')
         date_to = request.form.get('date_to')
         sort_by = request.form.get('sort_by')
-
         if booking_id:
             query = query.filter_by(id=booking_id)
         if user_name:
             query = query.filter(Booking.user_name.ilike(f"%{user_name}%"))
         if date_from and date_to:
             query = query.filter(Booking.check_in.between(date_from, date_to))
-
         if sort_by:
             if sort_by == "check_in":
                 query = query.order_by(Booking.check_in)
@@ -159,12 +149,8 @@ def admin():
                 query = query.order_by(Booking.user_name)
             else:
                 query = query.order_by(Booking.id)
-
-    # Fetch All Bookings if No Filters Applied
     results = query.all()
     return render_template('admin.html', results=results)
-
-
 
 @app.route('/edit_booking/<int:booking_id>', methods=['GET', 'POST'])
 def edit_booking(booking_id):
@@ -176,12 +162,12 @@ def edit_booking(booking_id):
             booking.room_type = request.form['room_type']
             booking.user_name = request.form['user_name']
             db.session.commit()
-            # flash('Booking updated successfully!', 'success')
+            flash('Booking updated successfully!', 'success')
             return redirect(url_for('admin'))
         except Exception as e:
             db.session.rollback()
             flash(f"Error updating booking: {str(e)}", 'error')
-    # return render_template('edit_booking.html', booking=booking)
+    return render_template('edit_booking.html', booking=booking)
 
 @app.route('/delete/<int:id>', methods=['POST'])
 def delete_booking(id):
@@ -203,25 +189,47 @@ def book_room():
         try:
             check_in = datetime.strptime(request.form['check_in'], '%Y-%m-%d')
             check_out = datetime.strptime(request.form['check_out'], '%Y-%m-%d')
+            user_name = request.form['user_name']
+            user_email = request.form['user_email']
+            room_type = request.form['room_type']
             if check_out <= check_in:
                 flash('Check-out date must be later than check-in date', 'error')
                 return redirect(url_for('book_room', room_type=room_type))
             new_booking = Booking(
                 check_in=check_in,
                 check_out=check_out,
-                room_type=request.form['room_type'],
-                user_name=request.form['user_name']
+                room_type=room_type,
+                user_name=user_name,
+                user_email=user_email
             )
             db.session.add(new_booking)
             db.session.commit()
-            flash('Booking successful!', 'success')
+            # send_confirmation_email(user_name, user_email, check_in, check_out, room_type)
+            flash('Booking successful! A confirmation email has been sent.', 'success')
             # return redirect(url_for('index'))
         except Exception as e:
             db.session.rollback()
             flash(f"Error: {str(e)}", 'error')
-            return redirect(url_for('book_room', room_type=room_type))
     return render_template('booking.html', room_type=room_type, min_date=min_date)
 
+def send_confirmation_email(name, email, check_in, check_out, room_type):
+    try:
+        html_content = render_template(
+            'email.html',
+            name=name,
+            check_in=check_in.strftime('%Y-%m-%d'),
+            check_out=check_out.strftime('%Y-%m-%d'),
+            room_type=room_type
+        )
+        msg = Message(
+            subject="Your Booking Confirmation - NTUT Hotel",
+            recipients=[email],
+            html=html_content
+        )
+        mail.send(msg)
+        print("Email sent successfully.")
+    except Exception as e:
+        print(f"Failed to send email: {e}")
 
 if __name__ == '__main__':
     app.run(debug=True)

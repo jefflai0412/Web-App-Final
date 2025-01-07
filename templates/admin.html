@@ -3,6 +3,27 @@
 <head>
     <title>Admin Panel</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script>
+        function enableEditing(bookingId) {
+            // Enable inputs for the specific booking row
+            const inputs = document.querySelectorAll(`[data-booking-id="${bookingId}"]`);
+            inputs.forEach(input => input.disabled = false);
+
+            // Show the save button
+            const saveButton = document.getElementById(`save-btn-${bookingId}`);
+            if (saveButton) saveButton.style.display = 'inline-block';
+        }
+
+        function cancelEditing(bookingId) {
+            // Disable inputs for the specific booking row
+            const inputs = document.querySelectorAll(`[data-booking-id="${bookingId}"]`);
+            inputs.forEach(input => input.disabled = true);
+
+            // Hide the save button
+            const saveButton = document.getElementById(`save-btn-${bookingId}`);
+            if (saveButton) saveButton.style.display = 'none';
+        }
+    </script>
 </head>
 <body>
     <!-- Navigation Bar -->
@@ -42,10 +63,11 @@
                 <thead>
                     <tr>
                         <th>Booking ID</th>
-                        <th>User Name</th>
+                        <th>Room Type</th>
                         <th>Check-In</th>
                         <th>Check-Out</th>
-                        <th>Room Type</th>
+                        <th>Name</th>
+                        <th>Email</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -54,16 +76,7 @@
                     <tr>
                         <td>{{ booking.id }}</td>
                         <td>
-                            <input type="text" name="user_name_{{ booking.id }}" class="form-control" value="{{ booking.user_name }}">
-                        </td>
-                        <td>
-                            <input type="date" name="check_in_{{ booking.id }}" class="form-control" value="{{ booking.check_in }}">
-                        </td>
-                        <td>
-                            <input type="date" name="check_out_{{ booking.id }}" class="form-control" value="{{ booking.check_out }}">
-                        </td>
-                        <td>
-                            <select name="room_type_{{ booking.id }}" class="form-select">
+                            <select name="room_type_{{ booking.id }}" class="form-select" data-booking-id="{{ booking.id }}" disabled>
                                 <option value="single" {% if booking.room_type == 'single' %}selected{% endif %}>Single Room</option>
                                 <option value="double" {% if booking.room_type == 'double' %}selected{% endif %}>Double Room</option>
                                 <option value="family" {% if booking.room_type == 'family' %}selected{% endif %}>Family Room</option>
@@ -71,7 +84,20 @@
                             </select>
                         </td>
                         <td>
-                            <button type="submit" name="edit_booking_{{ booking.id }}" class="btn btn-sm btn-success">Save</button>
+                            <input type="date" name="check_in_{{ booking.id }}" class="form-control" value="{{ booking.check_in }}" data-booking-id="{{ booking.id }}" disabled>
+                        </td>
+                        <td>
+                            <input type="date" name="check_out_{{ booking.id }}" class="form-control" value="{{ booking.check_out }}" data-booking-id="{{ booking.id }}" disabled>
+                        </td>
+                        <td>
+                            <input type="text" name="user_name_{{ booking.id }}" class="form-control" value="{{ booking.user_name }}" data-booking-id="{{ booking.id }}" disabled>
+                        </td>
+                        <td>
+                            <input type="email" name="user_email_{{ booking.id }}" class="form-control" value="{{ booking.user_email }}" data-booking-id="{{ booking.id }}" disabled>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-primary" onclick="enableEditing({{ booking.id }})">Edit</button>
+                            <button type="submit" name="edit_booking_{{ booking.id }}" id="save-btn-{{ booking.id }}" class="btn btn-sm btn-success" style="display: none;">Save</button>
                             <form action="{{ url_for('delete_booking', id=booking.id) }}" method="POST" style="display:inline;">
                                 <button type="submit" class="btn btn-sm btn-danger">Cancel</button>
                             </form>

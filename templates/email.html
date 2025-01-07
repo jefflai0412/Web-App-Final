@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Confirmation</title>
+</head>
+<body>
+    <h1>Thank you for booking with NTUT Hotel!</h1>
+    <p>Dear {{ name }},</p>
+    <p>We are excited to confirm your booking:</p>
+    <ul>
+        <li>Check-in: {{ check_in }}</li>
+        <li>Check-out: {{ check_out }}</li>
+        <li>Room Type: {{ room_type }}</li>
+    </ul>
+    <p>We look forward to hosting you!</p>
+    <p>Best regards,</p>
+    <p>NTUT Hotel Team</p>
+</body>
+</html>
