@@ -5,30 +5,43 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NTUT HOTEL</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
   <style>
     .carousel-inner img {
-      max-height: 400px;
-      object-fit: cover;
-    }
-    .photo-grid img {
-      width: 100%;
-      height: auto;
+      height: 300px;
       object-fit: cover;
       border-radius: 8px;
     }
-    .animation-container.active .animation-image,
-    .animation-container.active .animation-text {
-      transform: translateY(0);
-      opacity: 1;
-      transition: all 0.5s ease-in-out;
+    .carousel-indicators button {
+            width: 10px;
+            height: 10px;
+            border-radius: 10%;
+            background-color: #6c757d; /* Default grey color */
+            border: none;
+        }
+    .carousel-indicators .active {
+        background-color: #585858; /* Highlight active dot with green */
     }
-    .animation-container .animation-image,
-    .animation-container .animation-text {
-      transform: translateY(100px);
-      opacity: 0;
+    .carousel-control-prev-icon,
+    .carousel-control-next-icon {
+      filter: invert(100%);
+    }
+    .rooms h3 {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    .rooms .btn-primary {
+      background-color: #007bff;
+      border: none;
+      transition: background-color 0.3s ease;
+    }
+    .rooms .btn-primary:hover {
+      background-color: #0056b3;
     }
   </style>
+  
 </head>
 <body>
   <!-- Navigation Bar -->
@@ -65,7 +78,11 @@
             1, Sec. 3, Zhongxiao E. Rd., Taipei 10608 Taiwan
           </p>
           <p class="mb-4">(886-2) 2771-2171</p>
-          <a href="#" class="btn btn-outline-light">PARKING & TRANSPORTATION</a>
+          <a href="https://www.google.com/maps/dir/?api=1&destination=1+Sec+3+Zhongxiao+E+Rd,+Taipei+10608+Taiwan" 
+             class="btn btn-outline-light" 
+             target="_blank">
+            PARKING & TRANSPORTATION
+          </a>
         </div>
         <!-- Map Image -->
         <div class="col-md-7">
@@ -74,6 +91,7 @@
       </div>
     </div>
   </section>
+  
 
   <!-- Scroll Animation Section -->
   <section class="scroll-animation py-5 bg-light">
@@ -120,7 +138,6 @@
     </div>
   </section>
 
-  <!-- Rooms Section -->
   <section class="rooms py-5 bg-light">
     <div class="container">
       <h2 class="mb-4 text-center">房型介紹</h2>
@@ -130,10 +147,11 @@
           {% for room in rooms %}
           <button type="button" data-bs-target="#roomsCarousel" data-bs-slide-to="{{ loop.index0 }}" 
                   class="{% if loop.first %}active{% endif %}" aria-current="{% if loop.first %}true{% endif %}" 
-                  aria-label="Slide {{ loop.index }}"></button>
+                  aria-label="Slide {{ loop.index }}">
+          </button>
           {% endfor %}
         </div>
-
+  
         <!-- Carousel Items -->
         <div class="carousel-inner">
           {% for room in rooms %}
@@ -141,31 +159,37 @@
             <div class="row align-items-center">
               <!-- Room Image -->
               <div class="col-md-6">
-                <img src="{{ url_for('static', filename=room.image_urls.split(',')[0]) }}" class="d-block w-100 rounded" alt="{{ room.name }}">
+                <img src="{{ url_for('static', filename=room.image_urls.split(',')[0]) }}" 
+                     class="d-block w-100 rounded" 
+                     alt="{{ room.name }}">
               </div>
               <!-- Room Details -->
               <div class="col-md-6">
-                <h3>{{ room.name }}</h3>
-                <p>價格: {{ room.price }}</p>
-                <p>最多入住人數: {{ room.max_occupancy }}</p>
-                <ul>
-                  {% for feature, available in room.features.items() %}
-                  <li>
-                    {% if available %}
-                    <span class="text-success">✔</span> {{ feature }}
-                    {% else %}
-                    <span class="text-danger">✘</span> {{ feature }}
-                    {% endif %}
-                  </li>
-                  {% endfor %}
-                </ul>
-                <a href="{{ url_for('room', room_type=room.type) }}" class="btn btn-primary">詳細介紹</a>
+                <div class="p-4">
+                  <h3>{{ room.name }}</h3>
+                  <p>價格: <strong>{{ room.price }}</strong></p>
+                  <p>
+                    最多入住人數: <strong><i class="bi bi-people-fill"></i> {{ room.max_occupancy.replace('guests', '') }}</strong>
+                  </p>
+                  <!-- <ul class="list-unstyled">
+                    {% for feature, available in room.features.items() %}
+                    <li>
+                      {% if available %}
+                      <span class="text-success">✔</span> {{ feature }}
+                      {% else %}
+                      <span class="text-danger">✘</span> {{ feature }}
+                      {% endif %}
+                    </li>
+                    {% endfor %}
+                  </ul> -->
+                  <a href="{{ url_for('room', room_type=room.type) }}" class="btn btn-primary mt-3">詳細介紹</a>
+                </div>
               </div>
             </div>
           </div>
           {% endfor %}
         </div>
-
+  
         <!-- Carousel Controls -->
         <button class="carousel-control-prev" type="button" data-bs-target="#roomsCarousel" data-bs-slide="prev" aria-label="Previous">
           <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -176,6 +200,8 @@
       </div>
     </div>
   </section>
+  
+  
 
   <!-- Footer -->
   <footer class="py-4 bg-dark text-white text-center">
