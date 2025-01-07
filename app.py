@@ -172,10 +172,10 @@ def delete_booking(id):
     try:
         db.session.delete(booking)
         db.session.commit()
-        flash('Booking deleted successfully!', 'success')
+        # flash('Booking deleted successfully!', 'success')
     except Exception as e:
         db.session.rollback()
-        flash(f"Error deleting booking: {str(e)}", 'error')
+        # flash(f"Error deleting booking: {str(e)}", 'error')
     return redirect(url_for('admin'))
 
 @app.route('/book_room', methods=['GET', 'POST'])

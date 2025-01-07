@@ -25,14 +25,14 @@
             width: 10px;
             height: 10px;
             border-radius: 10%;
-            background-color: #6c757d; /* Default grey color */
+            background-color: #6c757d;
             border: none;
         }
         .carousel-indicators .active {
-            background-color: #585858; /* Highlight active dot with green */
+            background-color: #585858;
         }
         .carousel-item img {
-            max-height: 400px;
+            height: 100%;
             object-fit: cover;
             border-radius: 10px;
         }
@@ -44,6 +44,23 @@
         .btn-success:hover {
             background-color: #218838;
         }
+        .carousel-container {
+            max-width: 50%; /* Limit carousel width */
+        }
+        .details-container {
+            padding-left: 1.5rem;
+        }
+
+        .price {
+        font-size: 2rem; /* Larger font size */
+        font-weight: bold; /* Bold text */
+        color: #28a745; /* Bright green color */
+        }
+
+        .price-label {
+            font-size: 1.2rem; /* Slightly larger label size */
+            color: #6c757d; /* Subtle grey for the label */
+        }
     </style>
 </head>
 <body>
@@ -54,62 +71,79 @@
         <!-- Room Title -->
         <h1 class="text-center mb-4">{{ room.name }}</h1>
 
-        <!-- Card Container -->
-        <div class="card mx-auto" style="max-width: 700px;">
-            <!-- Carousel -->
-            <div id="carouselExampleSlidesOnly" class="carousel slide" data-bs-ride="carousel">
-                <!-- Dot Indicators -->
-                <div class="carousel-indicators">
-                    {% for image_url in room.image_urls.split(',') %}
-                    <button type="button" 
-                            data-bs-target="#carouselExampleSlidesOnly" 
-                            data-bs-slide-to="{{ loop.index0 }}" 
-                            class="{% if loop.first %}active{% endif %}" 
-                            aria-current="{% if loop.first %}true{% endif %}" 
-                            aria-label="Slide {{ loop.index }}">
-                    </button>
-                    {% endfor %}
-                </div>
+        <!-- Horizontal Card -->
+        <div class="card mx-auto" style="max-width: 900px;">
+            <div class="row g-0 align-items-center">
+                <!-- Carousel Section -->
+                <div class="col-md-6 carousel-container">
+                    <div id="carouselExampleSlidesOnly" class="carousel slide" data-bs-ride="carousel">
+                        <!-- Dot Indicators -->
+                        <div class="carousel-indicators">
+                            {% for image_url in room.image_urls.split(',') %}
+                            <button type="button" 
+                                    data-bs-target="#carouselExampleSlidesOnly" 
+                                    data-bs-slide-to="{{ loop.index0 }}" 
+                                    class="{% if loop.first %}active{% endif %}" 
+                                    aria-current="{% if loop.first %}true{% endif %}" 
+                                    aria-label="Slide {{ loop.index }}">
+                            </button>
+                            {% endfor %}
+                        </div>
 
-                <!-- Carousel Images -->
-                <div class="carousel-inner">
-                    {% for image_url in room.image_urls.split(',') %}
-                    <div class="carousel-item {% if loop.first %}active{% endif %}">
-                        <img class="d-block w-100" src="{{ url_for('static', filename=image_url.strip()) }}" alt="Room Image">
+                        <!-- Carousel Images -->
+                        <div class="carousel-inner">
+                            {% for image_url in room.image_urls.split(',') %}
+                            <div class="carousel-item {% if loop.first %}active{% endif %}">
+                                <img class="d-block w-100" src="{{ url_for('static', filename=image_url.strip()) }}" alt="Room Image">
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Carousel Controls -->
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleSlidesOnly" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleSlidesOnly" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
                     </div>
-                    {% endfor %}
                 </div>
 
-                <!-- Carousel Controls -->
-                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleSlidesOnly" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Previous</span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleSlidesOnly" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Next</span>
-                </button>
-            </div>
-
-            <!-- Room Details -->
-            <div class="card-body">
-                <p class="mb-2"><strong>Price:</strong> <span class="text-success">{{ room.price }}/Night</span></p>
-                <p>
-                    最多入住人數: <strong><i class="bi bi-people-fill"></i> {{ room.max_occupancy.replace('guests', '') }}</strong>
-                </p>
-                <h5 class="mt-4 mb-3">Features:</h5>
-                <ul class="list-group list-group-flush">
-                    {% for feature, available in room.features.items() %}
-                    <li class="list-group-item">
-                        {% if available %}
-                        <span class="text-success">✔</span> {{ feature }}
-                        {% else %}
-                        <span class="text-danger">✘</span> {{ feature }}
-                        {% endif %}
-                    </li>
-                    {% endfor %}
-                </ul>
-                <a href="{{ url_for('book_room', room_type=room.type) }}" class="btn btn-success mt-4 w-100">Book Now</a>
+                <!-- Details Section -->
+                <div class="col-md-6 details-container">
+                    <div class="card-body">
+                        <!-- Price Section -->
+                        <p class="mb-4">
+                            <span class="price-label">Price:</span>
+                            <span class="price">{{ room.price }}</span>
+                            <i class="bi bi-moon-stars-fill text-warning"></i> <!-- Night icon -->
+                        </p>
+                
+                        <!-- Max Occupancy -->
+                        <p>
+                            最多入住人數: <strong><i class="bi bi-people-fill"></i> {{ room.max_occupancy.replace('guests', '') }}</strong>
+                        </p>
+                
+                        <!-- Features -->
+                        <h5 class="mt-4 mb-3">Features:</h5>
+                        <ul class="list-group list-group-flush">
+                            {% for feature, available in room.features.items() %}
+                            <li class="list-group-item">
+                                {% if available %}
+                                <span class="text-success">✔</span> {{ feature }}
+                                {% else %}
+                                <span class="text-danger">✘</span> {{ feature }}
+                                {% endif %}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                
+                        <!-- Book Now Button -->
+                        <a href="{{ url_for('book_room', room_type=room.type) }}" class="btn btn-success mt-4 w-100">Book Now</a>
+                    </div>
+                </div>                
             </div>
         </div>
     </div>
