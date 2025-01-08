@@ -9,9 +9,6 @@ from flask_migrate import Migrate
 
 from openai import OpenAI 
 # 設置 OpenAI API Key
-client = OpenAI(
-    api_key="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"
-)
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:0000@localhost:5432/postgres'
