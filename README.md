@@ -40,10 +40,18 @@ This project is a comprehensive hotel booking and management system developed as
 - Edit and delete bookings directly from the dashboard.
 - Add and update room data via CLI commands.
 
-#### 4. **Email Notifications (Planned)**
+#### 4. Chatbot
+
+Integrated chatbot to assist users with questions about room options, bookings, and nearby attractions.
+
+Powered by OpenAI GPT-3.5 for natural and interactive conversations.
+
+Provides personalized responses based on user queries.
+
+#### 5. **Email Notifications (Planned)**
 - Functionality for sending email confirmations for bookings (not yet implemented).
 
-#### 5. **Deployment (Optional)**
+#### 6. **Deployment (Planned)**
 - The project is ready for deployment on platforms like Heroku, AWS, or GCP.
 - Configurable for deployment with environment variables for sensitive data.
 
@@ -53,7 +61,6 @@ This project is a comprehensive hotel booking and management system developed as
 - **Frontend:** HTML, CSS, JavaScript, Bootstrap
 - **Backend:** Flask (Python)
 - **Database:** PostgreSQL
-- **Additional Tools:** Flask-Migrate for database migrations, `smtplib` for email notifications.
 
 ---
 
