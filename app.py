@@ -13,7 +13,7 @@ from functools import wraps
 from openai import OpenAI 
 # 設置 OpenAI API Key
 client = OpenAI(
-    api_key="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"
+    api_key=""  # Replace with your OpenAI API Key
 )
 
 
