@@ -169,8 +169,7 @@ html, body {
 /* Garden Section */
 .garden-view-section {
   position: relative;
-  padding: 60px ;
-  padding-left: 0px;
+  padding: 60px 0;
 }
 
 .garden-view-section .blurred-image {
@@ -195,8 +194,6 @@ html, body {
   padding: 20px;
   background: rgba(0, 0, 0, 0.6);
   border-radius: var(--radius);
-  padding-top: 220px;
-  padding-bottom: 220px;
 }
 
 .garden-view-section .text-content h2 {
@@ -212,21 +209,14 @@ html, body {
 
 .garden-view-section .image-card {
   overflow: hidden;
-  text-align: center;
   border-radius: var(--radius);
   box-shadow: var(--box-shadow);
-
+  max-height: 600px;
+  max-width: 400px;
   object-fit: cover;
-  width: 70%;
-  height:auto;
-  margin: 0 auto;
-  top: 50%; left: 50%;
-
 }
 
 .garden-view-section .image-card img {
-
-  width:100%;
   object-fit: cover;
   transition: transform var(--transition-speed);
 }

@@ -1,16 +1,19 @@
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-
 from flask import Flask, render_template, request, flash, redirect, url_for , jsonify
 from datetime import datetime, date
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask import session
+from werkzeug.security import generate_password_hash, check_password_hash
+from functools import wraps
+
 
 from openai import OpenAI 
 # 設置 OpenAI API Key
 client = OpenAI(
-    api_key="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"
+    api_key="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"
 )
 
 
@@ -49,6 +52,21 @@ class Booking(db.Model):
     room_type = db.Column(db.String(50), nullable=False)
     user_name = db.Column(db.String(100), nullable=False)
     user_email = db.Column(db.String(120), nullable=False)  # Email field
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    password = db.Column(db.String(200), nullable=False)
+
+@app.cli.command('create-user')
+def create_user():
+    username = input('Enter username: ')
+    password = input('Enter password: ')
+    hashed_password = generate_password_hash(password)
+    user = User(username=username, password=hashed_password)
+    db.session.add(user)
+    db.session.commit()
+    print(f"User {username} created successfully!")
 
 
 # Initialize the database and populate room data
@@ -124,7 +142,40 @@ def room(room_type):
         return "Room not found", 404
     return render_template('room.html', room=room)
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        user = User.query.filter_by(username=username).first()
+        if user and check_password_hash(user.password, password):
+            session['user_id'] = user.id
+            flash('Logged in successfully!', 'log_success')
+            return redirect(url_for('admin'))
+        else:
+            flash('Invalid credentials, please try again.', 'log_error')
+    return render_template('login.html')
+
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            flash('Please log in to access the admin page.', 'log_error')
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+@app.route('/logout')
+def logout():
+    session.pop('user_id', None)
+    flash('Logged out successfully.', 'log_success')
+    return redirect(url_for('login'))
+
+
+
 @app.route('/admin', methods=['GET', 'POST'])
+@login_required
 def admin():
     query = Booking.query
     if request.method == 'POST':
@@ -176,7 +227,7 @@ def edit_booking(booking_id):
             return redirect(url_for('admin'))
         except Exception as e:
             db.session.rollback()
-            flash(f"Error updating booking: {str(e)}", 'error')
+            # flash(f"Error updating booking: {str(e)}", 'error')
     return render_template('edit_booking.html', booking=booking)
 
 @app.route('/delete/<int:id>', methods=['POST'])
@@ -222,45 +273,6 @@ def book_room():
             flash(f"Error: {str(e)}", 'error')
     return render_template('booking.html', room_type=room_type, min_date=min_date)
 
-def send_confirmation_email(name, email, check_in, check_out, room_type):
-    try:
-        smtp_server = 'smtp.gmail.com'
-        smtp_port = 587  # Use STARTTLS
-        sender_email = "ntuthotel@gmail.com"
-        sender_password = "jeffharvey"
-
-        msg = MIMEMultipart('alternative')
-        msg['Subject'] = "Your Booking Confirmation - NTUT Hotel"
-        msg['From'] = sender_email
-        msg['To'] = email
-
-        text = f"Hi {name},\n\nYour booking is confirmed!\nRoom: {room_type}\nCheck-In: {check_in}\nCheck-Out: {check_out}\n\nThank you for choosing NTUT Hotel!"
-        html = render_template(
-            'email.html',
-            name=name,
-            check_in=check_in.strftime('%Y-%m-%d'),
-            check_out=check_out.strftime('%Y-%m-%d'),
-            room_type=room_type
-        )
-
-        part1 = MIMEText(text, 'plain')
-        part2 = MIMEText(html, 'html')
-
-        msg.attach(part1)
-        # msg.attach(part2)
-
-
-        server = smtplib.SMTP(smtp_server, smtp_port)
-        try:
-            server.starttls()  # Establish a secure connection
-            server.login(sender_email, sender_password)
-            server.sendmail(sender_email, email, msg.as_string())
-        finally:
-            server.quit()  # Ensure the connection is closed
-
-        print("Email sent successfully.")
-    except Exception as e:
-        print(f"Failed to send email: {e}")
 
 @app.route('/chat',  methods=["GET", "POST"])
 def chat():
@@ -280,7 +292,7 @@ def chat():
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
-                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "system", "content": "這是一個平行時空，不過所有的資訊建立在現實中台北科大附近(附近以在華山文創、三創等地區走路可到的為附近(大安區中正區為例))，**唯一不同是台北科大現在是一間飯店，名為北科大飯店**，而現在你是一位很不錯的導引機器人，幫使用者回答問題。這裡最好的房間選像是DOUBLE ROOM，回味一下學生時期的點點滴滴吧(以及美好的睡眠體驗)"},
                 {"role": "user", "content": data["message"]},
             ],
         )

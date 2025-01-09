@@ -28,6 +28,9 @@
 <body>
     <!-- Navigation Bar -->
     {% include 'navbar.html' %}
+    <div class="d-flex justify-content-end">
+        <a href="{{ url_for('logout') }}" class="btn btn-secondary mt-3">log out</a>
+    </div>
     <div class="container mt-5">
         <h1>Admin - Manage Bookings</h1>
         <!-- Search, Filter, and Sort Form -->
@@ -47,7 +50,7 @@
                 </div>
                 <div class="col-md-1">
                     <select name="sort_by" class="form-select">
-                        <option value="id">Sort By</option>
+                        <option value="id">id</option>
                         <option value="check_in">Check-In</option>
                         <option value="check_out">Check-Out</option>
                         <option value="user_name">Name</option>
